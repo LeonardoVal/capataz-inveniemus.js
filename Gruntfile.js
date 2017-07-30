@@ -1,0 +1,27 @@
+// Gruntfile for [capataz-inveniemus.js](repo).
+
+module.exports = function (grunt) {
+	grunt.initConfig({
+		pkg: grunt.file.readJSON('package.json'),
+	});
+
+	require('creatartis-grunt').config(grunt, {
+		sourceNames: ['__prologue__',
+				'distributedEvaluation',
+			'__epilogue__'],
+		deps: [
+			{ name: 'creatartis-base', id: 'base',
+				path: 'node_modules/creatartis-base/build/creatartis-base.js' },
+			{ name: 'sermat', id: 'Sermat',
+				path: 'node_modules/sermat/build/sermat-umd.js' },
+			{ name: 'capataz', id: 'capataz' },
+			{ name: 'inveniemus',
+				path: 'node_modules/inveniemus/build/inveniemus.js' }
+		],
+		karma: false, // No testing with Karma.
+		docs: false
+	});
+
+	grunt.registerTask('build', ['compile']);//FIXME
+	grunt.registerTask('default', ['build']);
+};
