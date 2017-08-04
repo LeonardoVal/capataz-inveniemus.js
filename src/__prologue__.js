@@ -5,8 +5,6 @@ function __init__(base, Sermat, capataz, inveniemus){ "use strict";
 // Import synonyms. ////////////////////////////////////////////////////////////////////////////////
 	var raiseIf = base.raiseIf;
 
-	Sermat.modifiers.mode = Sermat.CIRCULAR_MODE;
-
 // Library layout. /////////////////////////////////////////////////////////////////////////////////
 	var exports = {
 		__package__: 'capataz-inveniemus',
