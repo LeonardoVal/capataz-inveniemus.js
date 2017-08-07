@@ -4,11 +4,11 @@ Distributing the element evaluation of a genetic algorithm solving the sum optim
 problem.
 */
 var base = require('creatartis-base'),
-	capatazInveniemus = require('./lib/capataz-inveniemus.js'),
-	capataz = capatazInveniemus.capataz,
-	inveniemus = capatazInveniemus.inveniemus;
+	capataz = require('capataz'),
+	inveniemus = require('inveniemus'),
+	capataz_inveniemus = require('./lib/capataz-inveniemus.js');
 
-capatazInveniemus.distributeEvaluation({
+capataz_inveniemus.distributeEvaluation({
 	server: capataz.Capataz.run({
 		port: 8088,
 		workerCount: 2,
