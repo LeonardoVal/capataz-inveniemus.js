@@ -20,10 +20,7 @@
 		"distributed-algorithm",
 		"metaheuristic"
 	],
-	"license": {
-		"type": "MIT",
-		"url": "https://github.com/LeonardoVal/capataz-inveniemus.js/LICENSE.md"
-	},
+	"license": "MIT",
 	"main": "build/capataz-inveniemus.js",
 	"files": [
 		"LICENSE.md",
@@ -32,8 +29,8 @@
 	"dependencies": {
 		"creatartis-base": "~0.1.7",
 		"sermat": "~0.0.8",
-		"capataz": "~0.1.5",
-		"inveniemus": "~0.1.5"
+		"capataz": "~0.1.6",
+		"inveniemus": "~0.2.0"
 	},
 	"devDependencies": {
 		"creatartis-grunt": "~0.0.3"
