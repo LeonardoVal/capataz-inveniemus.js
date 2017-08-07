@@ -13,8 +13,6 @@ function __init__(base, Sermat, capataz, inveniemus){ "use strict";
 // Import synonyms. ////////////////////////////////////////////////////////////////////////////////
 	var raiseIf = base.raiseIf;
 
-	Sermat.modifiers.mode = Sermat.CIRCULAR_MODE;
-
 // Library layout. /////////////////////////////////////////////////////////////////////////////////
 	var exports = {
 		__package__: 'capataz-inveniemus',
@@ -37,48 +35,61 @@ solutions, while the server handles all the rest.
 */
 
 exports.distributeEvaluation = (function () {
-	/**
-	*/
-	function _defaultJobFunction(imports) {
-		return (''+ function ($imports, element) {
-			sermat.include(base);
-			element = sermat.mat(element);
-			return element.evaluate();
-		}).replace('$imports', imports.join(', '));
-	}
+	/** The arguments are:
 
-	/** Checks arguments and calculates default values.
+	+ `server`: A configured Capataz server,
+
+	+ `mh`: An Inveniemus' Metaheuristic instance.
+
+	+ `imports`: Extra modules to load for the evaluation. Sermat and Inveniemus are always
+	included. By default is `[]`.
+
+	+ `args`: Extra arguments to consider for the evaluation. The element is always included, in
+	the last argument. By default is `[]`.
+
+	+ `fun`: The job function that performs the evaluation. By default is `element.evaluate()`.
+
+	+ `keepRunning`: If `true` leaves the server running after finishing. By default is `false`.
 	*/
 	function _checkArgs(args) {
 		args = Object.assign({
+			imports: [], // Extra imports.
+			args: [], // Extra arguments.
+			fun: 'function (element) {\n\treturn element.evaluate();\n}',
 			keepRunning: false
 		}, args);
-		args.jobPrototype = Object.assign({
-			imports: ['sermat', 'inveniemus']
-		}, args.jobPrototype);
-		args.jobPrototype.fun = args.jobPrototype.fun ||
-			_defaultJobFunction(args.jobPrototype.imports);
-		//TODO raiseIf(args.server instanceof capataz.Capataz, 'Invalid server!');
-		//TODO raiseIf(args.mh instanceof inveniemus.Metaheuristic, 'Invalid metaheuristics!');
-		raiseIf(typeof args.jobPrototype !== 'object', 'Invalid `jobPrototype`!');
-		raiseIf(!Array.isArray(args.jobPrototype.imports), 'Invalid `jobPrototype.imports`!');
-		var fun = args.jobPrototype.fun;
-		raiseIf(typeof fun !== 'function' && typeof fun !== 'string',
+		//TODO Check if it is a Capataz instance.
+		raiseIf(typeof args.server !== 'object', 'Invalid `server`!');
+		//TODO Check if it is a Metaheuristic instance.
+		raiseIf(typeof args.mh !== 'object', 'Invalid `metaheuristics`!');
+		raiseIf(!Array.isArray(args.imports), 'Invalid `imports`!');
+		raiseIf(typeof args.fun !== 'function' && typeof args.fun !== 'string',
 			'Invalid `jobPrototype.fun`!');
 		return args;
 	}
 
-	/** Builds a new `evaluate` method for the problem's `Element` class, which schedules the
-	job function in the capataz server.
+	/** Builds a new `evaluate` method for the problem's `Element` class, which schedules the job
+	function in the capataz server.
 	*/
-	function evaluateFunction(server, imports, fun) {
+	function evaluateFunction(args) {
+		var SERVER = args.server,
+			IMPORTS = ['sermat', 'inveniemus'].concat(args.imports),
+			ARGS = args.args,
+			fun = 'function () {\n'+
+				'\tvar Sermat = arguments[0],\n'+
+				'\t\tinveniemus = arguments[1];\n'+
+				'\tSermat.include(base);\n'+
+				'\targuments[arguments.length-1] = Sermat.mat(arguments[arguments.length-1]);\n'+
+				'\treturn ('+ args.fun +
+					').apply(this, Array.prototype.slice.call(arguments, 2));\n'+
+				'}';
 		return function scheduledEvaluate() {
 			var element = this;
-			return server.schedule({
+			return SERVER.schedule({
 				info: this.emblem(),
 				fun: fun,
-				imports: imports,
-				args: [Sermat.ser(this)]
+				imports: IMPORTS,
+				args: ARGS.concat([Sermat.ser(this, { mode: Sermat.CIRCULAR_MODE })])
 			}).then(function (evaluation) {
 				element.evaluation = evaluation;
 				return evaluation;
@@ -86,17 +97,16 @@ exports.distributeEvaluation = (function () {
 		};
 	}
 
-	/**
+	/** The actual function.
 	*/
-	return function distributedEvaluation(args) {
+	return function distributeEvaluation(args) {
 		args = _checkArgs(args);
 		var server = args.server,
 			mh = args.mh;
 
 		/** Change the element's `evaluate` method to schedule tasks in the Capataz server.
 		*/
-		mh.problem.Element.prototype.evaluate = evaluateFunction(args.server,
-			args.jobPrototype.imports, args.jobPrototype.fun);
+		mh.problem.Element.prototype.evaluate = evaluateFunction(args);
 
 		/** Log when every step finishes.
 		*/
