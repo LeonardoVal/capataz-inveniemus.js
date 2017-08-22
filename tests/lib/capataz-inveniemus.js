@@ -41,28 +41,32 @@ exports.distributeEvaluation = (function () {
 
 	+ `mh`: An Inveniemus' Metaheuristic instance.
 
-	+ `imports`: Extra modules to load for the evaluation. Sermat and Inveniemus are always
-	included. By default is `[]`.
+	+ `problemBuilder`: A function that builds the `Problem` instance to solve with the
+	Metaheuristic. May require modules as arguments.
+
+	+ `problemDependencies`: Modules required by the `problemBuilder`, that will be loaded with
+	RequireJS. By default is `[]`.
 
 	+ `args`: Extra arguments to consider for the evaluation. The element is always included, in
 	the last argument. By default is `[]`.
 
-	+ `fun`: The job function that performs the evaluation. By default is `element.evaluate()`.
+	+ `fun`: The job function that performs the evaluation. By default is
+	`problem.evaluation(element)`.
 
 	+ `keepRunning`: If `true` leaves the server running after finishing. By default is `false`.
 	*/
 	function _checkArgs(args) {
 		args = Object.assign({
-			imports: [], // Extra imports.
-			args: [], // Extra arguments.
-			fun: 'function (element) {\n\treturn element.evaluate();\n}',
+			problemDependencies: [],
+			fun: 'function (problem, element) {\n\treturn problem.evaluation(element);\n}',
 			keepRunning: false
 		}, args);
 		//TODO Check if it is a Capataz instance.
 		raiseIf(typeof args.server !== 'object', 'Invalid `server`!');
 		//TODO Check if it is a Metaheuristic instance.
 		raiseIf(typeof args.mh !== 'object', 'Invalid `metaheuristics`!');
-		raiseIf(!Array.isArray(args.imports), 'Invalid `imports`!');
+		raiseIf(typeof args.problemBuilder !== 'function', 'Invalid `problemBuilder`!');
+		raiseIf(!Array.isArray(args.problemDependencies), 'Invalid `problemDependencies`!');
 		raiseIf(typeof args.fun !== 'function' && typeof args.fun !== 'string',
 			'Invalid `jobPrototype.fun`!');
 		return args;
@@ -72,9 +76,7 @@ exports.distributeEvaluation = (function () {
 	function in the capataz server.
 	*/
 	function evaluateFunction(args) {
-		var SERVER = args.server,
-			IMPORTS = ['sermat', 'inveniemus'].concat(args.imports),
-			ARGS = args.args,
+		var server = args.server,
 			fun = 'function () {\n'+
 				'\tvar Sermat = arguments[0],\n'+
 				'\t\tinveniemus = arguments[1];\n'+
@@ -85,13 +87,14 @@ exports.distributeEvaluation = (function () {
 				'}';
 		return function scheduledEvaluate() {
 			var element = this;
-			return SERVER.schedule({
+			return server.schedule({
 				info: this.emblem(),
+				imports: ['sermat', 'inveniemus', 'problem'],
+				args: [Sermat.ser(this, { mode: Sermat.CIRCULAR_MODE })],
 				fun: fun,
-				imports: IMPORTS,
-				args: ARGS.concat([Sermat.ser(this, { mode: Sermat.CIRCULAR_MODE })])
 			}).then(function (evaluation) {
-				element.evaluation = evaluation;
+				element.evaluation = Array.isArray(evaluation) ? evaluation :
+					isNaN(evaluation) ? null : [+evaluation];
 				return evaluation;
 			});
 		};
@@ -102,11 +105,27 @@ exports.distributeEvaluation = (function () {
 	return function distributeEvaluation(args) {
 		args = _checkArgs(args);
 		var server = args.server,
-			mh = args.mh;
+			mh = args.mh,
+			problem = mh.problem;
+		/** If the metaheuristic has not been initialized with the problem, do so.
+		*/
+		if (!problem) {
+			problem = args.problemBuilder.apply(null, args.problemDependencies.map(require));
+			mh.problem = problem;
+		}
+
+		/** The `problemBuilder` is wrapped in a RequireJS definition and the server is configured
+		to serve it as `problem.js`.
+		*/
+		server.expressApp.get(server.config.staticRoute +'/problem.js', function (request, response) {
+			response.send("define("+ JSON.stringify(args.problemDependencies) +", "+
+				args.problemBuilder +');'
+			);
+		});
 
 		/** Change the element's `evaluate` method to schedule tasks in the Capataz server.
 		*/
-		mh.problem.Element.prototype.evaluate = evaluateFunction(args);
+		problem.Element.prototype.evaluate = evaluateFunction(args);
 
 		/** Log when every step finishes.
 		*/
