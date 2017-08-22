@@ -17,9 +17,12 @@ capataz_inveniemus.distributeEvaluation({
 		logFile: base.Text.formatDate(null, '"./tests/logs/test-run01-"yyyymmdd-hhnnss".txt"')
 	}),
 	mh: new inveniemus.metaheuristics.GeneticAlgorithm({
-		problem: new inveniemus.problems.testbeds.sumOptimization(10),
 		mutationRate: 0.4,
 		size: 100,
 		steps: 50
-	})
+	}),
+	problemBuilder: function (inveniemus) {
+		return new inveniemus.problems.testbeds.sumOptimization(10);
+	},
+	problemDependencies: ['inveniemus']
 });
