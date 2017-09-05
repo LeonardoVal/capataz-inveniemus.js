@@ -133,8 +133,9 @@ exports.distributeEvaluation = (function () {
 			var evalStat = mh.statistics.stat({ key:'evaluation', step: mh.step }),
 				best = mh.state[0];
 			server.logger.info("Advanced to step #"+ mh.step +". Evaluations "+ evalStat.minimum() +
-				" < "+ evalStat.average() +" < "+ evalStat.maximum() +". Best so far: "+
-				best.emblem() +".");
+				" < "+ evalStat.average() +" < "+ evalStat.maximum() +" (stddev: "+
+				evalStat.standardDeviation() +").");
+			server.logger.info("\tBest so far: "+ best.emblem() +".");
 		});
 
 		/** Set the server to stop when the run finishes.
