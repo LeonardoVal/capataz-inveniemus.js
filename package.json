@@ -33,7 +33,7 @@
 		"inveniemus": "~0.2.0"
 	},
 	"devDependencies": {
-		"creatartis-grunt": "~0.0.3"
+		"creatartis-grunt": "~0.0.5"
 	},
 	"scripts": {}
 }

@@ -10,13 +10,11 @@ module.exports = function (grunt) {
 				'distributedEvaluation',
 			'__epilogue__'],
 		deps: [
-			{ name: 'creatartis-base', id: 'base',
-				path: 'node_modules/creatartis-base/build/creatartis-base.js' },
-			{ name: 'sermat', id: 'Sermat',
+			{ id: 'creatartis-base', name: 'base' },
+			{ id: 'sermat', name: 'Sermat',
 				path: 'node_modules/sermat/build/sermat-umd.js' },
-			{ name: 'capataz', id: 'capataz' },
-			{ name: 'inveniemus',
-				path: 'node_modules/inveniemus/build/inveniemus.js' }
+			{ id: 'capataz' },
+			{ id: 'inveniemus' }
 		],
 		karma: false, // No testing with Karma.
 		docs: false
