@@ -3,6 +3,9 @@
 Distributing the element evaluation of a genetic algorithm solving the sum optimization testbed
 problem.
 */
+"use strict";
+require('source-map-support').install();
+
 var base = require('creatartis-base'),
 	capataz = require('capataz'),
 	inveniemus = require('inveniemus'),
