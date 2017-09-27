@@ -9,14 +9,14 @@ require('source-map-support').install();
 var base = require('creatartis-base'),
 	capataz = require('capataz'),
 	inveniemus = require('inveniemus'),
-	capataz_inveniemus = require('./lib/capataz-inveniemus.js');
+	capataz_inveniemus = require('../build/capataz-inveniemus.js');
 
 capataz_inveniemus.distributeEvaluation({
 	server: capataz.Capataz.run({
 		port: 8088,
 		workerCount: 2,
 		desiredEvaluationTime: 2000, // 2 seconds.
-		customFiles: './tests/lib',
+		customFiles: './node_modules/inveniemus/build/', // To access inveniemus.js
 		logFile: base.Text.formatDate(null, '"./tests/logs/test-run01-"yyyymmdd-hhnnss".txt"')
 	}),
 	mh: new inveniemus.metaheuristics.GeneticAlgorithm({
