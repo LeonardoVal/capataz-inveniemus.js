@@ -16,7 +16,6 @@ capataz_inveniemus.distributeEvaluation({
 		port: 8088,
 		workerCount: 2,
 		desiredEvaluationTime: 2000, // 2 seconds.
-		customFiles: './node_modules/inveniemus/build/', // To access inveniemus.js
 		logFile: base.Text.formatDate(null, '"./tests/logs/test-run01-"yyyymmdd-hhnnss".txt"')
 	}),
 	mh: new inveniemus.metaheuristics.GeneticAlgorithm({
