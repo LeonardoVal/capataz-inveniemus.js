@@ -27,10 +27,10 @@
 		"build"
 	],
 	"dependencies": {
+		"capataz": "0.1.7-beta",
 		"creatartis-base": "~0.1.7",
-		"sermat": "~0.0.8",
-		"capataz": "~0.1.6",
-		"inveniemus": "~0.2.0"
+		"inveniemus": "~0.2.0",
+		"sermat": "~0.0.8"
 	},
 	"devDependencies": {
 		"source-map-support": "~0.4.18",
