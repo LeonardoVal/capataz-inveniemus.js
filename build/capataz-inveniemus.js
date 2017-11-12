@@ -117,11 +117,8 @@ exports.distributeEvaluation = (function () {
 		/** The `problemBuilder` is wrapped in a RequireJS definition and the server is configured
 		to serve it as `problem.js`.
 		*/
-		server.expressApp.get(server.config.staticRoute +'/problem.js', function (request, response) {
-			response.send("define("+ JSON.stringify(args.problemDependencies) +", "+
-				args.problemBuilder +');'
-			);
-		});
+		server.__serveRequireModule__(args.problemBuilder, 'problem', args.problemDependencies);
+		server.__serveNodeModule__(inveniemus);
 
 		/** Change the element's `evaluate` method to schedule tasks in the Capataz server.
 		*/
