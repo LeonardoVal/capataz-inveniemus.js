@@ -33,8 +33,7 @@
 		"sermat": "~0.0.8"
 	},
 	"devDependencies": {
-		"source-map-support": "~0.4.18",
-		"creatartis-grunt": "~0.0.11"
+		"creatartis-grunt": "~0.0.13"
 	},
 	"scripts": {}
 }
