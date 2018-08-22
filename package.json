@@ -28,12 +28,12 @@
 	],
 	"dependencies": {
 		"capataz": "0.1.7-beta",
-		"creatartis-base": "~0.1.7",
+		"creatartis-base": "~0.1.8",
 		"inveniemus": "~0.2.0",
-		"sermat": "~0.0.8"
+		"sermat": "~0.0.9"
 	},
 	"devDependencies": {
-		"creatartis-grunt": "~0.0.13"
+		"creatartis-grunt": "~0.0.15"
 	},
 	"scripts": {}
 }
