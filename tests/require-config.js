@@ -46,10 +46,10 @@
 		"capataz-inveniemus": "../build/capataz-inveniemus",
 		"creatartis-base": "../node_modules/creatartis-base/build/creatartis-base.min",
 		"sermat": "../node_modules/sermat/build/sermat-umd",
-		"capataz": "../../capataz.js/build/capataz_node.min",
+		"capataz": "../node_modules/capataz/build/capataz_node.min",
 		"inveniemus": "../node_modules/inveniemus/build/inveniemus.min",
-		"express": "../../capataz.js/node_modules/express/index",
-		"body-parser": "../../capataz.js/node_modules/body-parser/index",
-		"depd": "../../capataz.js/node_modules/depd/index"
+		"express": "../node_modules/express/index",
+		"body-parser": "../node_modules/body-parser/index",
+		"depd": "../node_modules/depd/index"
 	}
 });
